@@ -7,9 +7,6 @@ namespace Challenge_2
         ClaimRepo _claimRepo = new ClaimRepo();
         public void RunMenu()
         {
-            DateTime dateTime = new DateTime(2018, 12, 16);
-            
-
             Console.WriteLine("Welcome to Komodo Claims dept. How can we help you today?");
             Console.ReadLine();
             bool menuRun = true;
@@ -24,14 +21,26 @@ namespace Challenge_2
                         SeeAllCliams();
                         break;
                     case 2:
-                        NextClaim();
+                        NextCLaimInQueue();
                         break;
-                    case 3:NewClaim();
+                    case 3:
+                        NewClaim();
                         break;
                     case 4:
                         menuRun = false;
                         break;
                 }
+            }
+        }
+
+        private void SeeAllCliams()
+        {
+            var claim = _claimRepo.PeekQueue();
+            Console.Clear();
+            Console.WriteLine("Claim ID\t Claim Type\t Description\t Claim Date\t Accident Date\t Claim Amount\t Is Claim Valid");
+            foreach (Claim newClaim in _claimRepo.SeeQueue())
+            {
+                Console.WriteLine($"{newClaim.ClaimID}, {newClaim.ClaimType}, {newClaim.ClaimDescription}, {newClaim.DateOfClaim}, {newClaim.DateOfIncident}, {newClaim.ClaimAmount}, {newClaim.IsValid}");
             }
         }
 
@@ -58,25 +67,27 @@ namespace Challenge_2
             Console.WriteLine("Enter claim amount: ");
             claim.ClaimAmount = decimal.Parse(Console.ReadLine());
 
-            Console.WriteLine("Is claim valid?: ");
-            claim.IsValid = true;
+            claim.IsValid = _claimRepo.GetBool(claim);
+
             _claimRepo.AddToQueue(claim);
-                
+
         }
 
-        private void NextClaim()
+        private void NextCLaimInQueue()
         {
-            throw new NotImplementedException();
-        }
+            Claim claimResolved = new Claim();
+            Console.WriteLine("Want to resolve your claim?  (y/n)");
+            var input = Console.ReadLine();
+            if (input == "y")
+            {
+                var claim = _claimRepo.PeekQueue();
+                Console.WriteLine($"{claim.ClaimID}, {claim.ClaimType}, {claim.ClaimDescription}, {claim.DateOfClaim}, {claim.DateOfIncident}, {claim.ClaimAmount}, {claim.IsValid}");
 
-        private void SeeAllCliams()
-        {
-            var claim = _claimRepo.SeeQueue();
-            Console.Clear();
-            Console.WriteLine("Claim ID\t Claim Type\t Description\t Claim Date\t Accident Date\t Claim Amount\t Is Claim Valid");
-            foreach(clai)
-            Console.WriteLine($"{claim}");
-            
+            }
+            else
+            {
+                claimResolved.IsValid = false;
+            }
         }
     }
 }
